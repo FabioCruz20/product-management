@@ -64,25 +64,25 @@ public class Product {
         return id;
     }
 
-    public void setId(final int id) {
-        this.id = id;
-    }
+//    public void setId(final int id) {
+//        this.id = id;
+//    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+//    public void setName(final String name) {
+//        this.name = name;
+//    }
 
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
+//    public void setPrice(final BigDecimal price) {
+//        this.price = price;
+//    }
     
     /**
      * Calculates discount based on a product price and 
@@ -96,5 +96,10 @@ public class Product {
     
     public Rating getRating() {
         return rating;
+    }
+    
+    public Product applyRating(Rating newRating) {
+        
+        return new Product(id, name, price, newRating);
     }
 }
