@@ -19,6 +19,7 @@ package labs.pm.data;
 import java.math.BigDecimal;
 import static java.math.RoundingMode.HALF_UP;
 import java.util.Objects;
+import java.time.LocalDate;
 
 /**
  * {@code Product} class represents properties and behaviours of 
@@ -31,7 +32,7 @@ import java.util.Objects;
  * @version 4.0
  * @author Fabio
  */
-public class Product {
+public abstract class Product {
     
     /**
      * A constant that defines a 
@@ -87,15 +88,16 @@ public class Product {
         return rating;
     }
     
-    public Product applyRating(Rating newRating) {
-        
-        return new Product(id, name, price, newRating);
+    public LocalDate getBestBefore() {
+        return LocalDate.now();
     }
-
+    
+    public abstract Product applyRating(Rating newRating);
+    
     @Override
     public String toString() {
         return id + ", " + name + ", " + price  + ", " + getDiscount() + ", " 
-            + rating.getStars() ;
+            + rating.getStars() + ", " + getBestBefore() ;
     }
 
     // geralmente, hashcode e equals são sobrescritos juntos

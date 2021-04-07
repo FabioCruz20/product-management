@@ -38,13 +38,9 @@ public class Food extends Product {
      *
      * @return the value of bestBefore
      */
+    @Override
     public LocalDate getBestBefore() {
         return bestBefore;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + ", " + bestBefore;
     }
 
     /**
@@ -53,27 +49,16 @@ public class Food extends Product {
      * @return a {@link java.math.BigDecimal BigDecimal} discount of 10% or zero
      * depending on current date.
      */
-//    @Override
-//    public BigDecimal getDiscount() {
-//                
-//        return (LocalDate.now().equals(bestBefore)) ? 
-//                super.getDiscount() :  BigDecimal.ZERO;
-//    }
-//    
-    /**
-     * A 10% discount is applied if time is between 17:30 and 18:30.
-     *
-     * @return a {@link java.math.BigDecimal BigDecimal} discount of 10% or zero
-     * depending on current time.
-     */
     @Override
     public BigDecimal getDiscount() {
-
-        LocalTime now = LocalTime.now();
-
-        return (now.isAfter(LocalTime.of(17, 30))
-                && now.isBefore(LocalTime.of(18, 30))
-                ? super.getDiscount() : BigDecimal.ZERO);
+                
+        return (LocalDate.now().equals(bestBefore)) ? 
+                super.getDiscount() :  BigDecimal.ZERO;
     }
-
+    
+    @Override
+    public Product applyRating(Rating newRating) {
+        return new Food(getId(), getName(), getPrice(), newRating, getBestBefore());
+    }
+    
 }
