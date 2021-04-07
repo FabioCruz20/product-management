@@ -18,6 +18,7 @@ package labs.pm.data;
 
 import java.math.BigDecimal;
 import static java.math.RoundingMode.HALF_UP;
+import java.util.Objects;
 
 /**
  * {@code Product} class represents properties and behaviours of 
@@ -96,4 +97,27 @@ public class Product {
         return id + ", " + name + ", " + price  + ", " + getDiscount() + ", " 
             + rating.getStars() ;
     }
+
+    // geralmente, hashcode e equals são sobrescritos juntos
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + this.id;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+//        if (obj != null && getClass() == obj.getClass()) {
+        if (obj instanceof Product) {
+            final Product other = (Product) obj;
+            return this.id == other.id && Objects.equals(this.name, other.name);
+        }
+        return false;
+    }
+    
+    
 }

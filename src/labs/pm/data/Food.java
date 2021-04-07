@@ -18,21 +18,20 @@ package labs.pm.data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  *
  * @author Fabio
  */
 public class Food extends Product {
-    
+
     private LocalDate bestBefore;
 
     public Food(int id, String name, BigDecimal price, Rating rating, LocalDate bestBefore) {
         super(id, name, price, rating);
         this.bestBefore = bestBefore;
     }
-    
-
 
     /**
      * Get the value of the best before date for the product
@@ -47,4 +46,34 @@ public class Food extends Product {
     public String toString() {
         return super.toString() + ", " + bestBefore;
     }
+
+    /**
+     * A 10% discount is applied if current date is the best before date.
+     *
+     * @return a {@link java.math.BigDecimal BigDecimal} discount of 10% or zero
+     * depending on current date.
+     */
+//    @Override
+//    public BigDecimal getDiscount() {
+//                
+//        return (LocalDate.now().equals(bestBefore)) ? 
+//                super.getDiscount() :  BigDecimal.ZERO;
+//    }
+//    
+    /**
+     * A 10% discount is applied if time is between 17:30 and 18:30.
+     *
+     * @return a {@link java.math.BigDecimal BigDecimal} discount of 10% or zero
+     * depending on current time.
+     */
+    @Override
+    public BigDecimal getDiscount() {
+
+        LocalTime now = LocalTime.now();
+
+        return (now.isAfter(LocalTime.of(17, 30))
+                && now.isBefore(LocalTime.of(18, 30))
+                ? super.getDiscount() : BigDecimal.ZERO);
+    }
+
 }
