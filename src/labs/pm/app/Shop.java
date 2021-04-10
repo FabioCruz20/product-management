@@ -38,7 +38,7 @@ public class Shop {
      */
     public static void main(String[] args) {
         
-        ProductManager pm = new ProductManager(new Locale("pt", "BR"));
+        ProductManager pm = new ProductManager("en-GB");
         
         pm.createProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED);
         pm.printProductReport(101);
@@ -50,11 +50,15 @@ public class Shop {
         pm.reviewProduct(101, Rating.THREE_STAR, "Just add some lemon");
         pm.printProductReport(101);
         
+        pm.changeLocale("ru-RU");
+        
         pm.createProduct(102, "Coffee", BigDecimal.valueOf(1.99), Rating.NOT_RATED);
         pm.reviewProduct(102, Rating.THREE_STAR, "Coffee was ok");
         pm.reviewProduct(102, Rating.ONE_STAR, "Where is the milk?!");
         pm.reviewProduct(102, Rating.FIVE_STAR, "It's perfect with ten spoons of sugar!");
         pm.printProductReport(102);
+        
+        pm.changeLocale("zh-CN");
         
         pm.createProduct(103, "Cake", BigDecimal.valueOf(3.99),
             Rating.NOT_RATED, LocalDate.now());
@@ -63,11 +67,15 @@ public class Shop {
         pm.reviewProduct(103, Rating.FIVE_STAR, "The cake is perfect");
         pm.printProductReport(103);
         
+        pm.changeLocale("fr-FR");
+        
         pm.createProduct(104, "Cookie", BigDecimal.valueOf(2.99),
             Rating.NOT_RATED, LocalDate.now().plusDays(2));
         pm.reviewProduct(104, Rating.THREE_STAR, "Just another cookie");
         pm.reviewProduct(104, Rating.THREE_STAR, "Ok");
         pm.printProductReport(104);
+        
+        pm.changeLocale("en-US");
         
         pm.createProduct(105, "Hot Chocolate", BigDecimal.valueOf(2.50),
             Rating.NOT_RATED);
