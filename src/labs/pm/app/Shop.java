@@ -104,6 +104,10 @@ public class Shop {
         pm.printProducts(priceLessThanTwo, ratingSorter.thenComparing(priceSorter));
 //        System.out.println("=================================================");
 //        pm.printProducts(ratingSorter.thenComparing(priceSorter).reversed());
+
+        // imprimindo os descontos associados a cada nota
+        pm.getDiscounts().forEach((rating, discount) -> 
+            System.out.println(rating + " " + discount));
     }
 
 }

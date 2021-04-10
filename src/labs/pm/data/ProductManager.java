@@ -177,6 +177,24 @@ public class ProductManager {
             .orElseGet(() -> null);
     }
     
+    public Map<String, String> getDiscounts() {
+        
+        // soma os descontos dos produtos agrupados pelas notas.
+        return products.keySet()
+            .stream()
+            .collect(
+                Collectors.groupingBy(
+                    product -> product.getRating().getStars(),
+                    Collectors.collectingAndThen(
+                        Collectors.summingDouble(
+                            product -> ((Product)product).getDiscount().doubleValue()
+                        ),
+                        discount -> formatter.numberFormat.format(discount)
+                    )
+                )
+            );
+    }
+    
     /**
      * Separa a apresentação da lógica de negócio
      */
