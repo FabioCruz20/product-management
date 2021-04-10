@@ -32,7 +32,9 @@ import java.time.LocalDate;
  * @version 4.0
  * @author Fabio
  */
-public abstract class Product {
+public abstract class Product implements Rateable<Product> {
+    
+    // Como Product é abstrata, ela não precisa implementar métodos abstratos da interface
     
     /**
      * A constant that defines a 
@@ -81,6 +83,7 @@ public abstract class Product {
         return price.max(DISCOUNT_RATE).setScale(2, HALF_UP);
     }
     
+    @Override
     public Rating getRating() {
         return rating;
     }
@@ -88,8 +91,6 @@ public abstract class Product {
     public LocalDate getBestBefore() {
         return LocalDate.now();
     }
-    
-    public abstract Product applyRating(Rating newRating);
     
     @Override
     public String toString() {
