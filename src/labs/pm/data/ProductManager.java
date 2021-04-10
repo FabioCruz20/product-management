@@ -30,8 +30,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -91,15 +94,16 @@ public class ProductManager {
         products.remove(product);
         reviews.add(new Review(rating, comments));
         
-        int sum = 0;
-        for(Review review : reviews) {
-            sum += review.getRating().ordinal();
-        }
-        
         // o rating atribuído ao produto é a média dos ratings dados a esse produto.
         // arredonda a nota para cima
         product = product.applyRating(
-            Rateable.convert( Math.round((float) sum / reviews.size()) )
+            Rateable.convert(
+                (int) Math.round(reviews.stream()
+                    .mapToInt(p -> p.getRating().ordinal())
+                    .average()
+                    .orElse(0)
+                )
+            )
         );
         products.put(product, reviews);
         
@@ -121,12 +125,6 @@ public class ProductManager {
         
         Collections.sort(reviews);
         
-        for (Review review : reviews) {
-            
-            txt.append(formatter.formatReview(review));
-            txt.append('\n');
-        }
-        
         if (reviews.isEmpty()) {
             
             // como ResourceFormatter é interna a ProductManager, essa classe
@@ -134,7 +132,22 @@ public class ProductManager {
             txt.append(formatter.getText("no.reviews"));
             txt.append('\n');
         }
+        else {
+            // Esta abordagem do forEach traria problemas no modo paralelo,
+            // porque a variável StringBuilder txt é mutável e poderia entrar
+            // em um estado consistente.
+//            reviews.stream().forEach(rev -> {
+//                txt.append(formatter.formatReview(rev));
+//            });
+            
+            txt.append(
+                reviews.stream()
+                    .map(rev -> formatter.formatReview(rev) + '\n')
+                    .collect(Collectors.joining())
+            );
+        }
         
+
         System.out.println(txt);
     }
     
@@ -142,31 +155,26 @@ public class ProductManager {
         printProductReport(findProduct(id));
     }
     
-    public void printProducts(Comparator<Product> sorter) {
-        List<Product> productList = new ArrayList<>(products.keySet());
-        productList.sort(sorter);
-        
+    public void printProducts(Predicate<Product> filter, Comparator<Product> sorter) {
         StringBuilder txt = new StringBuilder();
         
-        for (Product product : productList) {
-            txt.append(formatter.formatProduct(product));
-            txt.append('\n');
-        }
+        txt.append(products.keySet()
+            .stream()
+            .sorted(sorter)
+            .filter(filter)
+            .map(p -> formatter.formatProduct(p) + '\n')
+            .collect(Collectors.joining())
+        );
         System.out.println(txt);
     }
     
     public Product findProduct(int id) {
         
-        Product product = null;
-        
-        for(Product p : products.keySet()) {
-            if (p.getId() == id) {
-                product = p;
-                break;
-            }
-        }
-        
-        return product;
+        return products.keySet()
+            .stream()
+            .filter(p -> p.getId() == id)
+            .findFirst()
+            .orElseGet(() -> null);
     }
     
     /**
