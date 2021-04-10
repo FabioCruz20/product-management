@@ -22,8 +22,12 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -37,8 +41,10 @@ public class ProductManager {
     private DateTimeFormatter dateFormat;
     private NumberFormat numberFormat;
     
-    private Product product;
-    private Review[] reviews = new Review[5]; 
+//    private Product product;
+//    private Review[] reviews = new Review[5]; 
+    
+    private Map<Product, List<Review>> products = new HashMap<>();
     
     public ProductManager(Locale locale) {
         
@@ -55,46 +61,45 @@ public class ProductManager {
     public Product createProduct(int id, String name, BigDecimal price, 
         Rating rating, LocalDate bestBefore) {
         
-        product = new Food(id, name, price, rating, bestBefore);
+        Product product = new Food(id, name, price, rating, bestBefore);
+        products.putIfAbsent(product, new ArrayList<>());
         return product;
     }
     
     public Product createProduct(int id, String name, BigDecimal price, 
         Rating rating) {
         
-        product = new Drink(id, name, price, rating);
+        Product product = new Drink(id, name, price, rating);
+        products.putIfAbsent(product, new ArrayList<>());
         return product;
     }
     
     public Product reviewProduct(Product product, Rating rating, String comments) {
         
-        // aumenta o array em 5 posições, caso esteja cheio
-        if (reviews[reviews.length - 1] != null) {
-            reviews = Arrays.copyOf(reviews, reviews.length + 5);
-        }
+        List<Review> reviews = products.get(product);
         
-        int sum = 0, i = 0;
-        boolean reviewed = false;
+        // removendo a entrada antiga para adicionar uma nova depois
+        products.remove(product);
+        reviews.add(new Review(rating, comments));
         
-        // percorre o array até achar a primeira posição vazia para inserir uma review
-        while (i < reviews.length && !reviewed) {
-            
-            if (reviews[i] == null) {
-                reviews[i] = new Review(rating, comments);
-                reviewed = true;
-            }
-            sum += reviews[i].getRating().ordinal();
-            i++;
+        int sum = 0;
+        for(Review review : reviews) {
+            sum += review.getRating().ordinal();
         }
         
         // o rating atribuído ao produto é a média dos ratings dados a esse produto.
         // arredonda a nota para cima
-        this.product = product.applyRating(Rateable.convert(Math.round((float) sum / i )));
-        return this.product;
+        product = product.applyRating(
+            Rateable.convert( Math.round((float) sum / reviews.size()) )
+        );
+        products.put(product, reviews);
+        
+        return product;
     }
     
-    public void printProductReport() {
+    public void printProductReport(Product product) {
         
+        List<Review> reviews = products.get(product);
         StringBuilder txt = new StringBuilder();
         
         txt.append(
@@ -111,11 +116,6 @@ public class ProductManager {
         
         for (Review review : reviews) {
             
-            // a partir deste ponto, só há posições vazias no array de reviews. Podemos parar.
-            if (review == null) {
-                break;
-            }
-            
             txt.append(
                 MessageFormat.format(
                     resources.getString("review"),
@@ -126,7 +126,7 @@ public class ProductManager {
             txt.append('\n');
         }
         
-        if (reviews[0] == null) {
+        if (reviews.isEmpty()) {
             txt.append(resources.getString("no.reviews"));
             txt.append('\n');
         }
