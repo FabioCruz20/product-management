@@ -24,6 +24,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -224,8 +225,39 @@ public class ProductManager {
                 Rateable.convert(Integer.parseInt((String) values[1])),
                 (String) values[2]
             );
-        } catch (ParseException ex) {
+        } catch (ParseException | NumberFormatException ex) {
             logger.log(Level.WARNING, "Error parsing review "+ text, ex);
+        }
+    }
+    
+    public void parseProduct(String text) {
+        try {
+            Object[] values = productFormat.parse(text);
+            
+            int id = Integer.parseInt((String) values[1]);
+            String name = (String) values[2];
+            BigDecimal price = BigDecimal.valueOf(
+                Double.parseDouble((String) values[3])
+            );
+            Rating rating = Rateable.convert(
+                Integer.parseInt((String) values[4])
+            );
+            LocalDate bestBefore = LocalDate.parse((String) values[5]);
+            
+            switch ((String) values[0]) {
+                case "D" :
+                    
+                    createProduct(id, name, price, rating);
+                    break;
+                
+                case "F":
+                    
+                    createProduct(id, name, price, rating, bestBefore);
+                    break;
+            }
+            
+        } catch (ParseException | NumberFormatException | DateTimeParseException ex) {
+            logger.log(Level.WARNING, "Error parsing product "+ text, ex);
         }
     }
     

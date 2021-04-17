@@ -42,15 +42,15 @@ public class Shop {
         
         ProductManager pm = new ProductManager("en-GB");
         
-        pm.createProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED);
+//        pm.createProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED);
+        pm.parseProduct("D,101,Tea,1.99,0,2019-09-19");
         pm.printProductReport(42); // testando o tratamento de exceção do método
         pm.reviewProduct(42, Rating.FOUR_STAR, "Nice hot cup of tea");
-        pm.reviewProduct(101, Rating.TWO_STAR, "Rather weak tea");
-        pm.reviewProduct(101, Rating.FOUR_STAR, "Fine tea");
-        pm.reviewProduct(101, Rating.FOUR_STAR, "Good tea");
-        pm.reviewProduct(101, Rating.FIVE_STAR, "Perfect tea");
-        pm.reviewProduct(101, Rating.THREE_STAR, "Just add some lemon");
-        pm.parseReview("101,4,Great cup of tea");
+        pm.parseReview("101,2,Rather weak tea");
+        pm.parseReview("101,4,Fine tea");
+        pm.parseReview("101,4,Good tea");
+        pm.parseReview("101,5,Perfect tea");
+        pm.parseReview("101,3,Just add some lemon");
 //        pm.printProductReport(101);
         
 //        pm.changeLocale("ru-RU");
@@ -63,8 +63,9 @@ public class Shop {
         
 //        pm.changeLocale("zh-CN");
         
-        pm.createProduct(103, "Cake", BigDecimal.valueOf(3.99),
-            Rating.NOT_RATED, LocalDate.now());
+//        pm.createProduct(103, "Cake", BigDecimal.valueOf(3.99),
+//            Rating.NOT_RATED, LocalDate.now());
+        pm.parseProduct("F,103,Cake,3.99,0,2019-09-19");
         pm.reviewProduct(103, Rating.FIVE_STAR, "Very nice cake");
         pm.reviewProduct(103, Rating.FOUR_STAR, "It's good, but I've expected more chocolate");
         pm.reviewProduct(103, Rating.FIVE_STAR, "The cake is perfect");
