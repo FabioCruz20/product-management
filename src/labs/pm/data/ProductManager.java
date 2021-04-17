@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -46,6 +47,9 @@ public class ProductManager {
     
     private Map<Product, List<Review>> products = new HashMap<>();
     private ResourceFormatter formatter;
+    private ResourceBundle config = ResourceBundle.getBundle("labs.pm.data.config");
+    private MessageFormat productFormat = new MessageFormat(config.getString("product.data.format"));
+    private MessageFormat reviewFormat = new MessageFormat(config.getString("review.data.format"));
     
     private static Map<String, ResourceFormatter> formatters = Map.of(
         "en-GB", new ResourceFormatter(Locale.UK),
@@ -209,6 +213,20 @@ public class ProductManager {
                     )
                 )
             );
+    }
+    
+    public void parseReview(String text) {
+        try {
+            // esperamos que text venha no formato definido por review.data.format
+            Object[] values = reviewFormat.parse(text);
+            reviewProduct(
+                Integer.parseInt((String) values[0]),
+                Rateable.convert(Integer.parseInt((String) values[1])),
+                (String) values[2]
+            );
+        } catch (ParseException ex) {
+            logger.log(Level.WARNING, "Error parsing review "+ text, ex);
+        }
     }
     
     /**
