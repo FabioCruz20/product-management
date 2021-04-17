@@ -16,6 +16,8 @@
  */
 package labs.pm.data;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
@@ -53,6 +55,8 @@ public class ProductManager {
         "zh-CN", new ResourceFormatter(Locale.CHINA),
         "pt-BR", new ResourceFormatter(new Locale("pt", "BR"))
     );
+    
+    private static final Logger logger = Logger.getLogger(ProductManager.class.getName());
     
     public ProductManager(Locale locale) {
         changeLocale(locale.toLanguageTag());
@@ -111,7 +115,14 @@ public class ProductManager {
     }
     
     public Product reviewProduct(int id, Rating rating, String comments) {
-        return reviewProduct(findProduct(id), rating, comments);
+        try {
+            
+            return reviewProduct(findProduct(id), rating, comments);
+        }
+        catch(ProductManagerException ex) {
+           logger.log(Level.INFO, ex.getMessage());
+        }
+        return null;
     }
     
     public void printProductReport(Product product) {
@@ -152,7 +163,12 @@ public class ProductManager {
     }
     
     public void printProductReport(int id) {
-        printProductReport(findProduct(id));
+        try {
+            printProductReport(findProduct(id));
+        }
+        catch(ProductManagerException ex) {
+            logger.log(Level.INFO, ex.getMessage());
+        }
     }
     
     public void printProducts(Predicate<Product> filter, Comparator<Product> sorter) {
@@ -168,13 +184,13 @@ public class ProductManager {
         System.out.println(txt);
     }
     
-    public Product findProduct(int id) {
+    public Product findProduct(int id) throws ProductManagerException {
         
         return products.keySet()
             .stream()
             .filter(p -> p.getId() == id)
             .findFirst()
-            .orElseGet(() -> null);
+            .orElseThrow(() -> new ProductManagerException("Product with id "+ id + " not found"));
     }
     
     public Map<String, String> getDiscounts() {
